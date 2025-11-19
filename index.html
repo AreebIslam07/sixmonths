@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Half-Year Anniversary — For You</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Great+Vibes&family=Indie+Flower&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f7e9f0;
+      --card:#ffffff;
+      --accent:#ff8fb1;
+      --muted:#6c6c6c;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Poppins,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#ffe5ec 0%, #ffd6e8 60%);color:#5a5a5a;scroll-behavior:smooth}
+    .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 18px}
+
+    /* Password Gate */
+    #passwordGate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(255,245,249,0.96), rgba(255,240,247,0.96));z-index:9999}
+    .gateCard{width:min(540px,94vw);background:#fff;border-radius:16px;padding:24px;border:1px solid rgba(255,200,220,0.6);box-shadow:0 18px 40px rgba(255,182,193,0.25);text-align:center}
+    .gateTitle{font-family:'Great Vibes',cursive;font-size:44px;margin:0;color:#353535}
+    .pwrow{display:flex;gap:8px;justify-content:center;margin-top:10px}
+    .pwrow input{padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.15);width:200px;font-size:16px}
+    .pwrow button{padding:12px 16px;border-radius:10px;border:none;background:var(--accent);color:white;font-weight:600;cursor:pointer}
+    .hint{margin-top:12px;font-size:13px;color:#666}
+
+    header{width:100%;max-width:900px;margin-top:80px;text-align:center;opacity:0;transform:translateY(12px);transition:.6s}
+    header.show{opacity:1;transform:translateY(0)}
+
+    h1{font-family:'Great Vibes',cursive;font-size:46px;margin:0;color:#3b3b3b}
+    .lead{color:#777}
+
+    .gallery{width:100%;max-width:900px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;padding:20px}
+    .polaroid{background:white;padding:12px;border-radius:12px;box-shadow:0 8px 30px rgba(255,182,193,0.45);opacity:0;transform:translateY(26px) scale(.97);transition:.6s}
+    .polaroid.show{opacity:1;transform:translateY(0) scale(1)}
+
+    .photo img,
+    .photo video{
+      width:100%;
+      height:280px;
+      object-fit:cover;
+      border-radius:8px;
+    }
+
+    /* FIX: Specific fix for pic 3, prevent top being cut */
+    .photo img[data-fix="pic3"] {
+      object-position: top;
+    }
+
+    .caption{margin-top:10px;font-family:'Indie Flower',cursive;font-size:17px;background:white;padding:6px;border-radius:6px;color:#2b3a46}
+
+    .letterCard{max-width:820px;background:white;border-radius:12px;padding:20px;box-shadow:0 12px 40px rgba(255,182,193,0.25);margin-top:30px}
+    .letterInner h2{font-family:'Great Vibes',cursive;font-size:34px;margin:0}
+    .letterInner p{white-space:pre-wrap;font-size:18px;line-height:1.7;margin-top:12px}
+    
+    footer{text-align:center;margin-top:40px;color:#777;font-size:14px}
+  </style>
+</head>
+
+<body>
+  <!-- PASSWORD -->
+  <div id="passwordGate">
+    <div class="gateCard">
+      <div class="gateTitle">Only for you</div>
+      <div class="pwrow">
+        <input id="pwInput" placeholder="Enter password">
+        <button id="pwBtn">Open</button>
+      </div>
+      <div class="hint">Hint: it's our anniversary date</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <audio id="bgm" src="https://files.catbox.moe/vnjypm.m4a"></audio>
+
+  <div class="wrap" id="mainContent" aria-hidden="true">
+    <header id="hero">
+      <h1>Half-Year Anniversary</h1>
+      <p class="lead">Scroll to relive our memories ❤️</p>
+    </header>
+
+    <section class="gallery" id="gallery"></section>
+
+    <div class="letterCard">
+      <div class="letterInner">
+        <h2>My Letter</h2>
+        <p id="letterText"></p>
+      </div>
+    </div>
+
+    <footer>Made by Areeb with love — Half-Year Anniversary</footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    /* DATA */
+    const items = [
+      {type:'image',src:'https://files.catbox.moe/3jpjod.JPG',cap:'Our first ever pic together looking like professor and teacher clicking pic hahah'},
+      {type:'video',src:'https://files.catbox.moe/z82mcm.MP4',cap:'The day i took the best decision of my life'},
+      {type:'image',src:'https://files.catbox.moe/xmz9fp.PNG',cap:'When you took the best decision 😏😂'},
+      {type:'video',src:'https://files.catbox.moe/i5upla.MOV',cap:'Just us being in love'},
+      {type:'image',src:'https://files.catbox.moe/6w1qks.PNG',cap:'Love birds'},
+      {type:'image',src:'https://files.catbox.moe/4qjrla.jpg',cap:'me and my babygirl'}
+    ];
+
+    const letterText = `Happy not 6 month but Half a year Anniversary Cutie! Ever since you became mine i started loving myself and my life more and want to become better and better not for me only but for you and OUR future together. I want you to be in my life forever and ever and we will keep celebrating our anniversary not one but two inshaallah first being this and second you know the Nikah one.
+
+I just wanna wife you so bad and so soon you never know. I Love you so much with all heart and I trust you and I respect you alot. You are very important for me and You are the one person who is peace to my chaos , solution to my problem, the first person i wanna look in my morning and last person i wanna see when sleeping.
+
+I Love you so much 💘
+
+-Your Love`;
+
+    document.getElementById("letterText").textContent = letterText;
+
+    /* PASSWORD */
+    const PASSWORD = "20may";
+    const pwBtn = document.getElementById("pwBtn");
+
+    pwBtn.onclick = () => {
+      const val = document.getElementById("pwInput").value.trim().toLowerCase();
+      if(val === PASSWORD){
+        document.getElementById("passwordGate").style.display = "none";
+        document.getElementById("mainContent").removeAttribute("aria-hidden");
+
+        document.getElementById("hero").classList.add("show");
+
+        const audio = document.getElementById("bgm");
+        audio.volume = 1.0;
+        audio.play().catch(()=>{});
+
+        startConfetti();
+      }
+    };
+
+    /* CONFETTI */
+    function startConfetti(){
+      const end = Date.now() + 1200;
+      (function frame(){
+        confetti({particleCount:10, spread:70, origin:{y:0.2}});
+        if(Date.now() < end){requestAnimationFrame(frame);}
+      })();
+    }
+
+    /* GALLERY */
+    const gallery = document.getElementById("gallery");
+
+    items.forEach((item,i)=>{
+      const card = document.createElement("div");
+      card.className = "polaroid";
+
+      let media = "";
+      if(item.type === "image"){
+        /* PIC 3 FIX: Add data-fix attr to ONLY the 3rd image */
+        if(i === 2){
+          media = `<div class="photo"><img src="${item.src}" data-fix="pic3" loading="lazy"></div>`;
+        } else {
+          media = `<div class="photo"><img src="${item.src}" loading="lazy"></div>`;
+        }
+      } else {
+        /* VIDEO FIX: preload + instant autoplay */
+        media = `<div class="photo"><video src="${item.src}" muted loop autoplay playsinline preload="auto"></video></div>`;
+      }
+
+      card.innerHTML = `${media}<div class="caption">${item.cap}</div>`;
+      gallery.appendChild(card);
+    });
+
+    /* SCROLL ANIMATION */
+    const polaroids = document.querySelectorAll(".polaroid");
+    window.addEventListener("scroll",()=>{
+      polaroids.forEach(p=>{
+        const rect = p.getBoundingClientRect();
+        if(rect.top < window.innerHeight - 80){
+          p.classList.add("show");
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
